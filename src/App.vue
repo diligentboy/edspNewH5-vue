@@ -39,7 +39,7 @@
       <div class="home-card">
         <div class="header">
           <div class="max-amount">最高可借</div>
-          <div class="amount">{{ urlParams.e }}</div>
+          <div class="amount">500000</div>
           <div class="sub-text">额度高 为千万用户提供安全服务</div>
         </div>
         <div class="home-btn-container">
@@ -52,7 +52,7 @@
             <span class="checkbox-text">我已阅读知晓并同意《个人信息授权与隐私政策》</span>
           </label>
         </div>
-        <div class="low-rate">最低年化{{ urlParams.l }}% 到账快</div>
+        <div class="low-rate">最低年化3.85% 到账快</div>
       </div>
       <div class="platform-info">
         <div class="title">专业贷款平台</div>
@@ -105,15 +105,23 @@
         <div class="id-card-section">
           <div class="id-card-title">上传身份证</div>
           <div class="id-card-upload-area">
-            <div class="id-card-box">
-              <div class="id-card-icon">📷</div>
-              <div class="id-card-text">正面</div>
+            <div class="id-card-box" @click="triggerIdCardUpload('front')">
+              <img v-if="idCardImages.front" :src="idCardImages.front" class="id-card-preview" />
+              <template v-else>
+                <div class="id-card-icon">📷</div>
+                <div class="id-card-text">正面</div>
+              </template>
             </div>
-            <div class="id-card-box">
-              <div class="id-card-icon">📷</div>
-              <div class="id-card-text">反面</div>
+            <div class="id-card-box" @click="triggerIdCardUpload('back')">
+              <img v-if="idCardImages.back" :src="idCardImages.back" class="id-card-preview" />
+              <template v-else>
+                <div class="id-card-icon">📷</div>
+                <div class="id-card-text">反面</div>
+              </template>
             </div>
           </div>
+          <input type="file" ref="idCardFrontInput" accept="image/*" capture="environment" style="display: none;" @change="handleIdCardUpload($event, 'front')" />
+          <input type="file" ref="idCardBackInput" accept="image/*" capture="environment" style="display: none;" @change="handleIdCardUpload($event, 'back')" />
         </div>
         <div class="form-item required">
           <label>住址</label>
@@ -461,11 +469,15 @@
         <div class="bank-card-section">
           <div class="bank-card-title">请拍照上传银行卡号识别或手动输入银行卡完整卡号</div>
           <div class="bank-card-upload-area">
-            <div class="bank-card-box">
-              <div class="bank-card-icon">💳</div>
-              <div class="bank-card-text">选择银行卡自动录入</div>
+            <div class="bank-card-box" @click="triggerBankCardUpload">
+              <img v-if="bankCardImage" :src="bankCardImage" class="bank-card-preview" />
+              <template v-else>
+                <div class="bank-card-icon">💳</div>
+                <div class="bank-card-text">选择银行卡自动录入</div>
+              </template>
             </div>
           </div>
+          <input type="file" ref="bankCardInput" accept="image/*" capture="environment" style="display: none;" @change="handleBankCardUpload" />
         </div>
       </div>
       <div class="btn-container">
@@ -524,8 +536,8 @@ export default {
     return {
       currentPage: 'home',
       urlParams: {
-        e: '50000',
-        l: '4.3'
+        e: '500000',
+        l: '3.85'
       },
       agreementChecked: true,
       loanAgreementChecked: true,
@@ -534,6 +546,10 @@ export default {
         phone: '',
         idCard: '',
         address: ''
+      },
+      idCardImages: {
+        front: '',
+        back: ''
       },
       toggleData: {
         fund: false,
@@ -556,13 +572,14 @@ export default {
         companyPosition: ''
       },
       loanData: {
-        amount: '186000'
+        amount: '500000'
       },
       bankData: {
         name: '',
         number: '',
         bank: ''
       },
+      bankCardImage: '',
       bankAccount: '',
       selectedArea: '',
       selectedMortgage: '是',
@@ -581,8 +598,8 @@ export default {
       loadingText: '处理中...',
       monthlyPayment: '0.00',
       adminData: {
-        amount: '50000',
-        rate: '4.3'
+        amount: '500000',
+        rate: '3.85'
       },
       qrCodeUrl: ''
     };
@@ -599,12 +616,48 @@ export default {
     }
   },
   methods: {
+    triggerIdCardUpload(type) {
+      if (type === 'front') {
+        this.$refs.idCardFrontInput.click();
+      } else {
+        this.$refs.idCardBackInput.click();
+      }
+    },
+    handleIdCardUpload(event, type) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          if (type === 'front') {
+            this.idCardImages.front = e.target.result;
+          } else {
+            this.idCardImages.back = e.target.result;
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+      event.target.value = '';
+    },
+    triggerBankCardUpload() {
+      this.$refs.bankCardInput.click();
+    },
+    handleBankCardUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          this.bankCardImage = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+      event.target.value = '';
+    },
     getUrlParams() {
       const queryString = window.location.search;
       const urlParamsObj = new URLSearchParams(queryString);
       
-      this.urlParams.e = urlParamsObj.get('e') || '50000';
-      this.urlParams.l = urlParamsObj.get('l') || '4.3';
+      this.urlParams.e = urlParamsObj.get('e') || '500000';
+      this.urlParams.l = urlParamsObj.get('l') || '3.85';
       
       if (!queryString) {
         const newUrl = `${window.location.origin}${window.location.pathname}?e=${this.urlParams.e}&l=${this.urlParams.l}`;
@@ -1496,6 +1549,15 @@ body {
   justify-content: center;
   cursor: pointer;
   position: relative;
+  overflow: hidden;
+}
+
+.id-card-box:has(.id-card-preview) {
+  border: none;
+}
+
+.id-card-box:has(.id-card-preview)::before {
+  display: none;
 }
 
 .id-card-box::before {
@@ -1517,6 +1579,13 @@ body {
 .id-card-text {
   font-size: 14px;
   color: #666;
+}
+
+.id-card-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
 }
 
 .bank-card-section {
@@ -1571,6 +1640,21 @@ body {
 .bank-card-text {
   font-size: 14px;
   color: #666;
+}
+
+.bank-card-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.bank-card-box:has(.bank-card-preview) {
+  border: none;
+}
+
+.bank-card-box:has(.bank-card-preview)::before {
+  display: none;
 }
 
 .id-card-upload {
