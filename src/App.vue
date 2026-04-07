@@ -49,7 +49,7 @@
           <label class="checkbox-label">
             <input type="checkbox" v-model="agreementChecked">
             <span class="checkbox-custom"></span>
-            <span class="checkbox-text">我已阅读知晓并同意《个人信息授权与隐私政策》</span>
+            <span class="checkbox-text">我已阅读知晓并同意<a href="#">《个人信息授权与隐私政策》</a></span>
           </label>
         </div>
         <div class="low-rate">最低年化3.85% 到账快</div>
@@ -108,15 +108,30 @@
             <div class="id-card-box" @click="triggerIdCardUpload('front')">
               <img v-if="idCardImages.front" :src="idCardImages.front" class="id-card-preview" />
               <template v-else>
-                <div class="id-card-icon">📷</div>
-                <div class="id-card-text">正面</div>
+                <div class="id-card-placeholder">
+                  <div class="id-card-front-simple">
+                    <div class="id-card-info-simple">
+                      <div class="info-item-simple">姓名</div>
+                      <div class="info-item-simple">性别</div>
+                      <div class="info-item-simple">民族</div>
+                      <div class="info-item-simple">出生</div>
+                      <div class="info-item-simple">住址</div>
+                      <div class="info-item-simple">公民身份证号码</div>
+                    </div>
+                    <div class="id-card-face-simple"></div>
+                  </div>
+                </div>
               </template>
             </div>
             <div class="id-card-box" @click="triggerIdCardUpload('back')">
               <img v-if="idCardImages.back" :src="idCardImages.back" class="id-card-preview" />
               <template v-else>
-                <div class="id-card-icon">📷</div>
-                <div class="id-card-text">反面</div>
+                <div class="id-card-placeholder">
+                  <div class="id-card-back-simple">
+                    <div class="id-card-national-emblem-simple"></div>
+                    <div class="id-card-text-back-simple">中华人民共和国<br>居民身份证</div>
+                  </div>
+                </div>
               </template>
             </div>
           </div>
@@ -1146,11 +1161,12 @@ input {
   flex: 1;
   height: 40px;
   padding: 0 15px;
-  border: 1px solid #e8e8e8;
+  border: none;
   border-radius: 4px;
   font-size: 16px;
   color: #000;
   font-weight: 500;
+  background-color: #f9f9f9;
 }
 
 
@@ -1234,7 +1250,7 @@ input {
   width: 100%;
   max-width: 500px;
   border-radius: 10px;
-  padding: 40px 20px;
+  padding: 30px 20px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   margin-top: 40px;
   margin-bottom: 20px;
@@ -1242,7 +1258,7 @@ input {
 
 .header {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .max-amount {
@@ -1252,7 +1268,7 @@ input {
 }
 
 .amount {
-  font-size: 48px;
+  font-size: 36px;
   font-weight: bold;
   margin-bottom: 10px;
   color: #333;
@@ -1297,6 +1313,11 @@ input {
 
 .agreement input {
   margin-right: 8px;
+}
+
+.checkbox-text a {
+  color: #1890ff;
+  text-decoration: none;
 }
 
 .low-rate {
@@ -1455,16 +1476,17 @@ input {
   flex: 1;
   height: 40px;
   padding: 0 15px;
-  border: 1px solid #e8e8e8;
+  border: none;
   border-radius: 4px;
   font-size: 16px !important;
+  background-color: #f9f9f9;
 }
 
 .readonly-input {
   flex: 1;
   height: 40px;
   padding: 0 15px;
-  border: 1px solid #e8e8e8;
+  border: none;
   border-radius: 4px;
   font-size: 16px !important;
   background-color: #f9f9f9;
@@ -1606,6 +1628,90 @@ input {
   object-fit: cover;
   border-radius: 4px;
 }
+
+.id-card-placeholder {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  border-radius: 4px;
+  overflow: hidden;
+  background-color: #f9f9f9;
+}
+
+.id-card-front-simple {
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  display: flex;
+  position: relative;
+}
+
+.id-card-info-simple {
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.info-item-simple {
+  font-size: 10px;
+  color: #333;
+  margin-bottom: 6px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 2px;
+  width: 100%;
+}
+
+.id-card-face-simple {
+  position: absolute;
+  right: 15px;
+  top: 15px;
+  width: 40px;
+  height: 50px;
+  background-color: #e0e0e0;
+  border-radius: 2px;
+}
+
+.id-card-back-simple {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 10px;
+}
+
+.id-card-national-emblem-simple {
+  width: 30px;
+  height: 30px;
+  background-color: #ff0000;
+  border-radius: 50%;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.id-card-national-emblem-simple::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  background-color: #ffd700;
+  border-radius: 50%;
+}
+
+.id-card-text-back-simple {
+  font-size: 12px;
+  color: #333;
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+
 
 .bank-card-section {
   background-color: #fff;
@@ -1809,10 +1915,10 @@ input {
   flex: 1;
   height: 30px;
   padding: 0 10px;
-  border: 1px solid #e8e8e8;
+  border: none;
   border-radius: 4px;
   font-size: 14px;
-  background-color: #fff;
+  background-color: #f9f9f9;
 }
 
 .form-row .select-btn {
@@ -2031,9 +2137,9 @@ input:checked + .slider:before {
 }
 
 .amount-circle .amount {
-  font-size: 36px;
+  font-size: 34px;
   font-weight: bold;
-  color: #ff4d4f;
+  color: #000;
 }
 
 .result-status {
@@ -2211,9 +2317,22 @@ input:checked + .slider:before {
   max-width: 500px;
   background-color: #fff;
   border-radius: 10px;
-  padding: 30px 20px;
+  padding: 30px 15px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   margin-top: 40px;
+}
+
+#admin .form-item {
+  padding: 0 15px;
+}
+
+#admin .form-item label {
+  flex: 0 0 100px;
+  font-size: 14px !important;
+}
+
+#admin .form-item input {
+  font-size: 14px !important;
 }
 
 .admin-title {
