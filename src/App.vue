@@ -855,12 +855,31 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background-color: #f5f5f5;
   color: #333;
+  min-height: 100vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
+/* 确保输入框字体大小至少为 16px，避免自动放大 */
+input {
+  font-size: 16px !important;
+}
+
+/* 调整标签字体大小，与输入框保持协调 */
+.form-item label {
+  font-size: 16px !important;
+}
+
+/* 优化输入框容器，确保有足够空间 */
+.form-item {
+  margin-bottom: 15px;
+}
+
+/* 确保页面底部有足够空间，防止键盘挡住输入框 */
 .page {
   width: 100%;
   min-height: 100vh;
-  padding: 0;
+  padding: 0 0 100px 0;
   background-color: #f5f5f5;
 }
 
@@ -1412,11 +1431,11 @@ body {
 }
 
 .form-item label {
-  font-size: 14px;
-  flex: 0 0 100px;
+  font-size: 16px !important;
+  flex: 0 0 120px;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow: visible;
+  text-overflow: clip;
 }
 
 .form-item.required label {
@@ -1438,7 +1457,7 @@ body {
   padding: 0 15px;
   border: 1px solid #e8e8e8;
   border-radius: 4px;
-  font-size: 14px;
+  font-size: 16px !important;
 }
 
 .readonly-input {
@@ -1447,7 +1466,7 @@ body {
   padding: 0 15px;
   border: 1px solid #e8e8e8;
   border-radius: 4px;
-  font-size: 14px;
+  font-size: 16px !important;
   background-color: #f9f9f9;
   cursor: pointer;
   display: flex;
