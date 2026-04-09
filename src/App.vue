@@ -108,30 +108,13 @@
             <div class="id-card-box" @click="triggerIdCardUpload('front')">
               <img v-if="idCardImages.front" :src="idCardImages.front" class="id-card-preview" />
               <template v-else>
-                <div class="id-card-placeholder">
-                  <div class="id-card-front-simple">
-                    <div class="id-card-info-simple">
-                      <div class="info-item-simple">姓名</div>
-                      <div class="info-item-simple">性别</div>
-                      <div class="info-item-simple">民族</div>
-                      <div class="info-item-simple">出生</div>
-                      <div class="info-item-simple">住址</div>
-                      <div class="info-item-simple">公民身份证号码</div>
-                    </div>
-                    <div class="id-card-face-simple"></div>
-                  </div>
-                </div>
+                <div class="id-card-placeholder id-card-front-bg"></div>
               </template>
             </div>
             <div class="id-card-box" @click="triggerIdCardUpload('back')">
               <img v-if="idCardImages.back" :src="idCardImages.back" class="id-card-preview" />
               <template v-else>
-                <div class="id-card-placeholder">
-                  <div class="id-card-back-simple">
-                    <div class="id-card-national-emblem-simple"></div>
-                    <div class="id-card-text-back-simple">中华人民共和国<br>居民身份证</div>
-                  </div>
-                </div>
+                <div class="id-card-placeholder id-card-back-bg"></div>
               </template>
             </div>
           </div>
@@ -533,6 +516,17 @@
         style="background-color: #fff;"
       />
     </van-popup>
+
+    <!-- 自定义提示框 -->
+    <div v-if="showCustomDialog" class="custom-dialog-overlay" @click="closeCustomDialog">
+      <div class="custom-dialog" @click.stop>
+        <div class="custom-dialog-title">提示</div>
+        <div class="custom-dialog-content">{{ customDialogMessage }}</div>
+        <div class="custom-dialog-footer">
+          <button class="custom-dialog-button" @click="closeCustomDialog">确定</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -612,6 +606,8 @@ export default {
       loading: false,
       loadingText: '处理中...',
       monthlyPayment: '0.00',
+      showCustomDialog: false,
+      customDialogMessage: '',
       adminData: {
         amount: '500000',
         rate: '3.85'
@@ -809,8 +805,12 @@ export default {
       this.loadingText = '账号风险检测中...';
       setTimeout(() => {
         this.loading = false;
-        alert('抱歉，您暂时无法提款，原因可能是您存在如下情况:\n1、名下贷款或信用卡逾期情况;\n2、近期频繁申请，大数据评分较低情况;\n3、可能存在贷款资金用于股市楼市、投资等行为;\n4、名下银行账户有存在风险情况;\n5、存在其他方面原因:如需了解详情，请咨询当地客户经理;');
+        this.showCustomDialog = true;
+        this.customDialogMessage = '抱歉，您暂时无法提款，原因可能是您存在如下情况:\n1、名下贷款或信用卡逾期情况;\n2、近期频繁申请，大数据评分较低情况;\n3、可能存在贷款资金用于股市楼市、投资等行为;\n4、名下银行账户有存在风险情况;\n5、存在其他方面原因:如需了解详情，请咨询当地客户经理;';
       }, 3000);
+    },
+    closeCustomDialog() {
+      this.showCustomDialog = false;
     },
     bindAccount() {
       if (!this.bankData.name) {
@@ -1166,7 +1166,7 @@ input {
   font-size: 16px;
   color: #000;
   font-weight: 500;
-  background-color: #f9f9f9;
+  background-color: #fff;
 }
 
 
@@ -1479,7 +1479,7 @@ input {
   border: none;
   border-radius: 4px;
   font-size: 16px !important;
-  background-color: #f9f9f9;
+  background-color: #fff;
 }
 
 .readonly-input {
@@ -1489,7 +1489,7 @@ input {
   border: none;
   border-radius: 4px;
   font-size: 16px !important;
-  background-color: #f9f9f9;
+  background-color: #fff;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -1580,8 +1580,9 @@ input {
 }
 
 .id-card-box {
-  width: 48%;
   height: 100px;
+  width: calc(100px * 1.585);
+  max-width: 48%;
   border: 1px dashed #ff4d4f;
   border-radius: 4px;
   display: flex;
@@ -1709,6 +1710,18 @@ input {
   color: #333;
   margin-bottom: 10px;
   font-weight: 500;
+}
+
+.id-card-front-bg {
+  background-image: url('./assets/images/zheng.png');
+  background-size: cover;
+  background-position: center;
+}
+
+.id-card-back-bg {
+  background-image: url('./assets/images/fan.png');
+  background-size: cover;
+  background-position: center;
 }
 
 
@@ -1918,7 +1931,7 @@ input {
   border: none;
   border-radius: 4px;
   font-size: 14px;
-  background-color: #f9f9f9;
+  background-color: #fff;
 }
 
 .form-row .select-btn {
@@ -2157,6 +2170,67 @@ input:checked + .slider:before {
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
+}
+
+/* 自定义提示框样式 */
+.custom-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+}
+
+.custom-dialog {
+  background-color: #fff;
+  border-radius: 12px;
+  width: 80%;
+  max-width: 400px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.custom-dialog-title {
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  padding: 20px 0 10px;
+  color: #333;
+}
+
+.custom-dialog-content {
+  font-size: 14px;
+  line-height: 1.5;
+  padding: 0 20px 20px;
+  color: #666;
+  text-align: left;
+}
+
+.custom-dialog-footer {
+  border-top: 1px solid #f0f0f0;
+  padding: 10px 0;
+}
+
+.custom-dialog-button {
+  width: 100%;
+  height: 44px;
+  background-color: transparent;
+  color: #1890ff;
+  border: none;
+  border-radius: 0;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  outline: none;
+}
+
+.custom-dialog-button:active {
+  background-color: #f0f8ff;
 }
 
 /* 审核中页面样式 */
