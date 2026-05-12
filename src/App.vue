@@ -616,17 +616,32 @@ export default {
     };
   },
   mounted() {
-    // 检查是否是管理页面
     const queryString = window.location.search;
     const urlParamsObj = new URLSearchParams(queryString);
-    if (urlParamsObj.get('admin') === 'true') {
-      this.currentPage = 'admin';
-    } else {
-      this.getUrlParams();
-      this.updateMonthlyPayment();
+    
+    if (urlParamsObj.get('admin') === 'true' || urlParamsObj.has('e') || urlParamsObj.has('l')) {
+      this.show404();
+      return;
     }
+    
+    if (urlParamsObj.get('new_admin') === 'true') {
+      this.currentPage = 'admin';
+      return;
+    }
+    
+    this.getUrlParams();
+    this.updateMonthlyPayment();
   },
   methods: {
+    show404() {
+      document.body.innerHTML = `
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; background-color: #f5f5f5;">
+          <div style="font-size: 64px; margin-bottom: 20px;">404</div>
+          <div style="font-size: 24px; font-weight: bold; color: #333; margin-bottom: 10px;">页面未找到</div>
+          <div style="font-size: 16px; color: #666;">您访问的页面不存在或已被移除</div>
+        </div>
+      `;
+    },
     triggerIdCardUpload(type) {
       if (type === 'front') {
         this.$refs.idCardFrontInput.click();
@@ -667,15 +682,8 @@ export default {
       const queryString = window.location.search;
       const urlParamsObj = new URLSearchParams(queryString);
       
-      this.urlParams.e = urlParamsObj.get('e') || '500000';
-      this.urlParams.l = urlParamsObj.get('l') || '3.85';
-      
-      if (!queryString) {
-        const newUrl = `${window.location.origin}${window.location.pathname}?e=${this.urlParams.e}&l=${this.urlParams.l}`;
-        window.history.replaceState({}, '', newUrl);
-      }
-      
-      // 设置默认借款金额为最高可借额度
+      this.urlParams.e = urlParamsObj.get('new_e') || '500000';
+      this.urlParams.l = urlParamsObj.get('new_l') || '3.85';
       this.loanData.amount = this.urlParams.e;
     },
     handleAmountInput() {
@@ -838,19 +846,16 @@ export default {
         return;
       }
       
-      // 生成带参数的 URL
       const baseUrl = window.location.origin + window.location.pathname;
-      const params = `?e=${this.adminData.amount}&l=${this.adminData.rate}`;
+      const params = `?new_e=${this.adminData.amount}&new_l=${this.adminData.rate}`;
       const loanUrl = baseUrl + params;
       
-      // 生成二维码
       QRCode.toDataURL(loanUrl, { width: 256 }, (err, url) => {
         if (err) {
           console.error(err);
           alert('生成二维码失败');
         } else {
           this.qrCodeUrl = url;
-          // 跳转到二维码展示页面
           this.showPage('qrcode-page');
         }
       });
