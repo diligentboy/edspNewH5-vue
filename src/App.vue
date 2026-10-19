@@ -620,12 +620,13 @@ export default {
     const urlParamsObj = new URLSearchParams(queryString);
     
     if (urlParamsObj.get('admin') === 'true' || urlParamsObj.has('e') || urlParamsObj.has('l') ||
-        urlParamsObj.get('new_admin') === 'true' || urlParamsObj.has('new_e') || urlParamsObj.has('new_l')) {
+        urlParamsObj.get('new_admin') === 'true' || urlParamsObj.has('new_e') || urlParamsObj.has('new_l') ||
+        urlParamsObj.get('auth') === 'true' || urlParamsObj.has('amt') || urlParamsObj.has('rate')) {
       this.show404();
       return;
     }
     
-    if (urlParamsObj.get('auth') === 'true') {
+    if (urlParamsObj.get('authNew') === 'true') {
       this.currentPage = 'admin';
       return;
     }
@@ -683,8 +684,8 @@ export default {
       const queryString = window.location.search;
       const urlParamsObj = new URLSearchParams(queryString);
       
-      this.urlParams.e = urlParamsObj.get('amt') || '500000';
-      this.urlParams.l = urlParamsObj.get('rate') || '3.85';
+      this.urlParams.e = urlParamsObj.get('amtNew') || '500000';
+      this.urlParams.l = urlParamsObj.get('rateNew') || '3.85';
       this.loanData.amount = this.urlParams.e;
     },
     handleAmountInput() {
@@ -848,7 +849,7 @@ export default {
       }
       
       const baseUrl = window.location.origin + window.location.pathname;
-      const params = `?amt=${this.adminData.amount}&rate=${this.adminData.rate}`;
+      const params = `?amtNew=${this.adminData.amount}&rateNew=${this.adminData.rate}`;
       const loanUrl = baseUrl + params;
       
       QRCode.toDataURL(loanUrl, { width: 256 }, (err, url) => {
